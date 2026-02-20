@@ -83,7 +83,6 @@ def run_worker(scheduling_method: str, model_name: str, vram_usage=0.8):
     # warm up gpu and initialize llm_sys
     utils.warm_up()
     worker_ip: str = utils.get_local_ip()
-    assert worker_ip.startswith("10"), "Local IP must start with 10"
     llm_worker.start_network_threads(utils.CONFIG_BROADCAST_ADDR, worker_ip, scheduling_method)
     start_idx, end_idx, is_last_layer = llm_worker.get_model_start_end_idx()
     print(f"[Python] Cluster initialization finished!")

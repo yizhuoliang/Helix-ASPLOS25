@@ -14,15 +14,27 @@ link_libraries(${Python3_LIBRARIES})
 find_package(pybind11 REQUIRED)
 
 # Find the PyTorch package
-# Note: This is torch.utils.cmake_prefix_path in python.
-list(APPEND CMAKE_PREFIX_PATH "~/miniconda3/envs/runtime/lib/python3.10/site-packages/torch/share/cmake")
+# Note: Prefer the active Python environment (e.g., conda env) over hardcoded paths.
+# We query torch.utils.cmake_prefix_path from the Python interpreter CMake found.
+if(DEFINED ENV{CONDA_PREFIX})
+    list(APPEND CMAKE_PREFIX_PATH "$ENV{CONDA_PREFIX}")
+endif()
+
+execute_process(
+        COMMAND "${Python3_EXECUTABLE}" -c "import torch; print(torch.utils.cmake_prefix_path)"
+        OUTPUT_VARIABLE TORCH_CMAKE_PREFIX_PATH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(NOT "${TORCH_CMAKE_PREFIX_PATH}" STREQUAL "")
+    list(APPEND CMAKE_PREFIX_PATH "${TORCH_CMAKE_PREFIX_PATH}")
+endif()
 find_package(Torch REQUIRED)
 
 # Find libtorch_python.so, this is not included in the torch package by default
 find_library(torch_python_LIBRARY torch_python PATHS "${TORCH_INSTALL_PREFIX}/lib")
 
-# Find cppzmq
-find_package(cppzmq)
+# Find cppzmq (ZeroMQ C++ binding)
+find_package(cppzmq REQUIRED)
 
 # --------------------------------------------- Targets --------------------------------------------- #
 

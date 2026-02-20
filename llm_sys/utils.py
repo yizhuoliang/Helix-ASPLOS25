@@ -1,6 +1,8 @@
 # 2024.04.24 Yixuan Mei
-import torch
+import os
 import socket
+
+import torch
 
 # in simulator, the first compute node has idx 2
 # in real sys, the first compute node has idx 1
@@ -15,7 +17,7 @@ def to_real(node_id: int) -> int:
         return node_id - SIMULATOR_NODE_OFFSET
 
 
-CONFIG_BROADCAST_ADDR = "tcp://10.128.0.31:5000"
+CONFIG_BROADCAST_ADDR = os.environ.get("HELIX_CONFIG_BROADCAST_ADDR", "tcp://10.128.0.31:5000")
 
 
 def warm_up():
@@ -26,6 +28,10 @@ def warm_up():
 
 
 def get_local_ip():
+    override_ip = os.environ.get("HELIX_LOCAL_IP")
+    if override_ip:
+        return override_ip
+
     # Attempt to connect to an internet host in order to determine the local interface
     try:
         # Create a dummy socket to connect to an Internet IP or DNS
