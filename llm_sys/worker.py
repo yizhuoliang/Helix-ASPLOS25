@@ -15,6 +15,7 @@ from llm_sys.engine.common import PipelineSequence, PipelineSequenceData, Pipeli
 from llm_sys.engine.scheduler import LayerwiseScheduler
 from llm_sys.engine.exec_engine import PipelineStageEngine
 import llm_sys.engine.llama
+import llm_sys.engine.qwen3_30b_hacked
 
 import llm_sys.utils as utils
 
